@@ -1,11 +1,13 @@
 package com.example.composedailyexpensetracker.database
 
 import androidx.lifecycle.LiveData
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.composedailyexpensetracker.data.Expense
 
+@Dao
 interface ExpenseDao {
     @Query("SELECT * FROM expense")
     fun getAllExpenses(): LiveData<List<Expense>>
