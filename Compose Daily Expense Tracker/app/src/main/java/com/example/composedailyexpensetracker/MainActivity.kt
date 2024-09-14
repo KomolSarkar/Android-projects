@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.composedailyexpensetracker.data.Expense
 import com.example.composedailyexpensetracker.ui.theme.ComposeDailyExpenseTrackerTheme
+import com.example.composedailyexpensetracker.ui.theme.screens.MainScreen
 import com.example.composedailyexpensetracker.viewmodel.ExpenseViewModel
 
 class MainActivity : ComponentActivity() {
@@ -34,16 +35,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val expenseViewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
         expenseViewModel.addExpense()
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         setContent {
             ComposeDailyExpenseTrackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
+                /*Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    *//*Greeting(
                         name = "Android",
                         modifier = Modifier.padding(innerPadding),
                         expenseViewModel
+                    )*//*
+                    MainScreen(
+                        modifier = Modifier.padding(innerPadding)
                     )
-                }
+                }*/
+                MainScreen()
             }
         }
     }
