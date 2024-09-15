@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.composedailyexpensetracker.data.Expense
 import com.example.composedailyexpensetracker.ui.theme.ComposeDailyExpenseTrackerTheme
+import com.example.composedailyexpensetracker.ui.theme.screens.AddExpenseScreen
 import com.example.composedailyexpensetracker.ui.theme.screens.MainScreen
 import com.example.composedailyexpensetracker.viewmodel.ExpenseViewModel
 
@@ -48,7 +49,8 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     )
                 }*/
-                MainScreen()
+                //MainScreen()
+                AddExpenseScreen()
             }
         }
     }
