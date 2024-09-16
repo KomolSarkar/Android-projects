@@ -13,6 +13,8 @@ import com.example.composedailyexpensetracker.data.Expense
 import com.example.composedailyexpensetracker.database.ExpenseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.Date
 
 class ExpenseViewModel(): ViewModel() {
 
@@ -20,19 +22,11 @@ class ExpenseViewModel(): ViewModel() {
 
     val expenseList : LiveData<List<Expense>> = expenseDao.getAllExpenses()
 
-    fun addExpense() {
+    fun addExpense(expense: Expense) {
         viewModelScope.launch(Dispatchers.IO) {
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-            expenseDao.addExpense(Expense(0,"expense", 50))
-
+            /*val date = Date.from(Instant.now())
+            expenseDao.addExpense(Expense(0,date.time, "Komol", 100))
+            expenseDao.addExpense(Expense(0,date.time, "Sukanta", 100))*/
         }
     }
 

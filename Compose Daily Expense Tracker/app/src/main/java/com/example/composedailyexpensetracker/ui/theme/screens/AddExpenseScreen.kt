@@ -32,10 +32,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.composedailyexpensetracker.viewmodel.ExpenseViewModel
 import java.text.SimpleDateFormat
 
 @Composable
-fun AddExpenseScreen() {
+fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseViewModel) {
     var expenseAmount by remember { mutableStateOf("") }
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -49,7 +51,7 @@ fun AddExpenseScreen() {
             DateSelector()
             UserBox()
             OutlinedTextField(
-                modifier= Modifier.fillMaxWidth().padding(32.dp),
+                modifier= Modifier.fillMaxWidth().padding(32.dp, 4.dp),
                 value = expenseAmount,
                 onValueChange = {
                     expenseAmount = it
@@ -64,7 +66,7 @@ fun AddExpenseScreen() {
                 /*viewModel.addTodo(inputText)
                 inputText = ""*/
             },
-                Modifier.fillMaxWidth().padding(32.dp)) {
+                Modifier.fillMaxWidth().padding(32.dp, 4.dp)) {
                 Text(text = "Add")
             }
         }
@@ -79,7 +81,7 @@ fun UserBox() {
     var selectedUser by remember { mutableStateOf(users[0]) }
 
     Box(
-        modifier = Modifier.fillMaxWidth().padding(32.dp)
+        modifier = Modifier.fillMaxWidth().padding(32.dp, 4.dp)
     ) {
         ExposedDropdownMenuBox(
             expanded = isExpanded,
@@ -127,7 +129,7 @@ fun DateSelector() {
     val openDialog = remember { mutableStateOf(false) }
 
     OutlinedButton(
-        modifier = Modifier.fillMaxWidth().padding(32.dp),
+        modifier = Modifier.fillMaxWidth().padding(32.dp, 4.dp),
         onClick = {
             openDialog.value = true
         }

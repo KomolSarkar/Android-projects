@@ -25,80 +25,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.composedailyexpensetracker.data.Expense
 import com.example.composedailyexpensetracker.ui.theme.ComposeDailyExpenseTrackerTheme
 import com.example.composedailyexpensetracker.ui.theme.screens.AddExpenseScreen
 import com.example.composedailyexpensetracker.ui.theme.screens.MainScreen
 import com.example.composedailyexpensetracker.viewmodel.ExpenseViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val expenseViewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
-        expenseViewModel.addExpense()
         //enableEdgeToEdge()
         setContent {
             ComposeDailyExpenseTrackerTheme {
-                /*Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    *//*Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding),
-                        expenseViewModel
-                    )*//*
-                    MainScreen(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }*/
-                //MainScreen()
-                AddExpenseScreen()
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "main_screen", builder = {
+                    composable("main_screen") {
+                        MainScreen(navController, expenseViewModel)
+                    }
+                    composable("add_expense_screen") {
+                        AddExpenseScreen(navController, expenseViewModel)
+                    }
+                })
             }
         }
     }
 }
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier, expenseViewModel: ExpenseViewModel) {
-    /*Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-
-    Button(
-        modifier = Modifier.
-    ) { }*/
-    val expenseList by expenseViewModel.expenseList.observeAsState()
-
-    expenseList?.let {
-        LazyColumn(
-            content = {
-                itemsIndexed(it) {index: Int, item: Expense ->
-                    ExpenseRow(item)
-                }
-            }
-        )
-    }?: Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        text = "No items yet",
-        fontSize = 16.sp
-    )
-}
-
-@Composable
-fun ExpenseRow(expense: Expense) {
-    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-        Text(
-            text = expense.agenda + " -> " + expense.amount,
-            color = Color.Green
-        )
-    }
-}
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ComposeDailyExpenseTrackerTheme {
-        Greeting("Android")
-    }
-}*/

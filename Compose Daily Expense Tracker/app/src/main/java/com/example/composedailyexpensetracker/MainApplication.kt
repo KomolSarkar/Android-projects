@@ -16,6 +16,6 @@ class MainApplication: Application() {
             applicationContext,
             ExpenseDatabase::class.java,
             ExpenseDatabase.NAME
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 }
