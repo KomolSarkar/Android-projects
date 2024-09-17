@@ -18,17 +18,50 @@ import java.util.Date
 
 class ExpenseViewModel(): ViewModel() {
 
+    val addExpenseDate = MutableLiveData<Long>()
+    val addExpenseUser = MutableLiveData<String>("Komol")
+    val addExpenseAmountInString = MutableLiveData<String>()
+
     val expenseDao = MainApplication.expenseDatabase.getExpenseDao()
 
     val expenseList : LiveData<List<Expense>> = expenseDao.getAllExpenses()
 
-    fun addExpense(expense: Expense) {
+    fun onExpenderChange(user: String) {
+        addExpenseUser.value = user
+    }
+
+    fun onExpenseDateChange(date: Long) {
+        addExpenseDate.value = date
+    }
+
+    fun onExpenseAmountChange(amount: String) {
+        addExpenseAmountInString.value = amount
+    }
+
+    fun addExpense() {
         viewModelScope.launch(Dispatchers.IO) {
             /*val date = Date.from(Instant.now())
             expenseDao.addExpense(Expense(0,date.time, "Komol", 100))
             expenseDao.addExpense(Expense(0,date.time, "Sukanta", 100))*/
+            addExpenseUser.value?.let {
+                addExpenseDate.value?.let { it1 ->
+                    addExpenseAmountInString.value?.let { it2 ->
+                        Expense(0, it1,
+                            it, it2.toInt())
+                    }
+                }
+            }?.let {
+                expenseDao.addExpense(it)
+                resetExpenditureValues()
+            }
         }
     }
 
-
+    private fun resetExpenditureValues() {
+        viewModelScope.launch(Dispatchers.Main.immediate) {
+            addExpenseUser.value = "Komol"
+            addExpenseDate.value = 0L
+            addExpenseAmountInString.value = ""
+        }
+    }
 }

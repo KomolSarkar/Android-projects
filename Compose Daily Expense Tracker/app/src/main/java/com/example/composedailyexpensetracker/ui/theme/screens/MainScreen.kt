@@ -13,6 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +39,7 @@ import java.util.Date
 
 @Composable
 fun MainScreen(navController: NavController, expenseViewModel: ExpenseViewModel) {
+    val expenseList by expenseViewModel.expenseList.observeAsState()
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -72,7 +76,6 @@ fun MainScreen(navController: NavController, expenseViewModel: ExpenseViewModel)
 
                 Spacer(modifier = Modifier.heightIn(4.dp))
                 ExpenseHeadline()
-                val expenseList by expenseViewModel.expenseList.observeAsState()
                 expenseList?.let {
                     LazyColumn(content = {
                         itemsIndexed(it) {index: Int, item: Expense ->
@@ -200,31 +203,37 @@ fun ExpenseHeadline() {
 
 @Composable
 fun ExpenseItem(expense: Expense) {
-    Row(
-        modifier = Modifier.fillMaxWidth()
+    Card(modifier = Modifier.fillMaxWidth().padding(4.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        )
     ) {
-        val date = Date(expense.date)
-        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
-        val date_str = simpleDateFormat.format(date)
-        Text(
-            modifier = Modifier.weight(.3f)
-                .align(Alignment.CenterVertically),
-            text = date_str,
-            textAlign = TextAlign.Left
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val date = Date(expense.date)
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+            val date_str = simpleDateFormat.format(date)
+            Text(
+                modifier = Modifier.weight(.3f)
+                    .align(Alignment.CenterVertically),
+                text = date_str,
+                textAlign = TextAlign.Left
+            )
 
-        Text(
-            modifier = Modifier.weight(.4f)
-                .align(Alignment.CenterVertically),
-            text = expense.name,
-            textAlign = TextAlign.Left
-        )
+            Text(
+                modifier = Modifier.weight(.4f)
+                    .align(Alignment.CenterVertically),
+                text = expense.name,
+                textAlign = TextAlign.Left
+            )
 
-        Text(
-            modifier = Modifier.weight(.3f)
-                .align(Alignment.CenterVertically),
-            text = "BDT " + expense.amount,
-            textAlign = TextAlign.Left
-        )
+            Text(
+                modifier = Modifier.weight(.3f)
+                    .align(Alignment.CenterVertically),
+                text = "BDT " + expense.amount,
+                textAlign = TextAlign.Left
+            )
+        }
     }
 }

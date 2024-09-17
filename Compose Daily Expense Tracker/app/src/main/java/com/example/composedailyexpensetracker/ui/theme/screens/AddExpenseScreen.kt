@@ -1,5 +1,7 @@
 package com.example.composedailyexpensetracker.ui.theme.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,11 +27,13 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -38,6 +42,10 @@ import java.text.SimpleDateFormat
 
 @Composable
 fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseViewModel) {
+    val users = arrayOf("Komol", "Sukanta")
+    val addExpenseDate by expenseViewModel.addExpenseDate.observeAsState(0L)
+    val addExpenseUser by expenseViewModel.addExpenseUser.observeAsState(users[0])
+    val addExpenseAmount by expenseViewModel.addExpenseAmountInString.observeAsState("")
     var expenseAmount by remember { mutableStateOf("") }
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -48,13 +56,20 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            DateSelector()
-            UserBox()
+            DateSelector(onDateChange = {
+                Log.i("Komols date", it.toString())
+                expenseViewModel.onExpenseDateChange(it)
+            })
+            UserBox(users, addExpenseUser, onUserChange = {
+                Log.i("Komols user", it)
+                expenseViewModel.onExpenderChange(it)
+            })
             OutlinedTextField(
                 modifier= Modifier.fillMaxWidth().padding(32.dp, 4.dp),
-                value = expenseAmount,
+                value = addExpenseAmount.toString(),
                 onValueChange = {
-                    expenseAmount = it
+                    Log.i("Komols amount", it.toString())
+                    expenseViewModel.onExpenseAmountChange(it)
                 },
                 label = {
                     Text(text = "Amount in BDT")
@@ -63,8 +78,14 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
             )
 
             Button(onClick = {
-                /*viewModel.addTodo(inputText)
-                inputText = ""*/
+                if (addExpenseDate != 0L || addExpenseAmount != "") {
+                    expenseViewModel.addExpense()
+                    navController.navigate("main_screen") {
+                        popUpTo("add_expense_screen") {
+                            inclusive = true
+                        }
+                    }
+                }
             },
                 Modifier.fillMaxWidth().padding(32.dp, 4.dp)) {
                 Text(text = "Add")
@@ -75,10 +96,10 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserBox() {
-    val users = arrayOf("Komol", "Sukanta")
+fun UserBox(users: Array<String>, user: String, onUserChange: (String)->Unit) {
+
     var isExpanded by remember { mutableStateOf(false) }
-    var selectedUser by remember { mutableStateOf(users[0]) }
+    //var selectedUser by remember { mutableStateOf(users[0]) }
 
     Box(
         modifier = Modifier.fillMaxWidth().padding(32.dp, 4.dp)
@@ -90,7 +111,7 @@ fun UserBox() {
             }
         ) {
             TextField(
-                value = selectedUser,
+                value = user,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = {
@@ -111,7 +132,8 @@ fun UserBox() {
                             Text(text = user)
                         },
                         onClick = {
-                            selectedUser = user
+                            onUserChange(user)
+                            //selectedUser = user
                             isExpanded = false
                         }
                     )
@@ -123,7 +145,7 @@ fun UserBox() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateSelector() {
+fun DateSelector(onDateChange: (Long)->Unit) {
     // Decoupled snackbar host state from scaffold state for demo purposes.
     var dateResult by remember { mutableStateOf("Select date") }
     val openDialog = remember { mutableStateOf(false) }
@@ -150,6 +172,7 @@ fun DateSelector() {
                         openDialog.value = false
                         var date = "no selection"
                         if(datePickerState.selectedDateMillis != null){
+                            onDateChange(datePickerState.selectedDateMillis!!)
                             val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
                             date = simpleDateFormat.format(datePickerState.selectedDateMillis)
                             //date = Tools.convertLongToTime(datePickerState.selectedDateMillis!!)
