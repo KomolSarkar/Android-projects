@@ -22,9 +22,34 @@ class ExpenseViewModel(): ViewModel() {
     val addExpenseUser = MutableLiveData<String>("Komol")
     val addExpenseAmountInString = MutableLiveData<String>()
 
+    val totalCost = MutableLiveData<Int>(0)
+    val expenseOfKomol = MutableLiveData<Int>(0)
+    val expenseOfSukanta = MutableLiveData<Int>(0)
+    val balanceOfKomol = MutableLiveData<Int>(0)
+    val balanceOfSukanta = MutableLiveData<Int>(0)
+
     val expenseDao = MainApplication.expenseDatabase.getExpenseDao()
 
     val expenseList : LiveData<List<Expense>> = expenseDao.getAllExpenses()
+    val observer = expenseList.observeForever {
+        var total = 0
+        var kTotal = 0
+        var sTotal = 0
+        for (i in 0..it.size-1) {
+            total += it[i].amount
+            if (it[i].name == "Komol") {
+                kTotal += it[i].amount
+            } else {
+                sTotal += it[i].amount
+            }
+        }
+
+        totalCost.value = total
+        expenseOfKomol.value = kTotal
+        expenseOfSukanta.value = sTotal
+        balanceOfKomol.value = kTotal - (total / 2)
+        balanceOfSukanta.value = sTotal - (total / 2)
+    }
 
     fun onExpenderChange(user: String) {
         addExpenseUser.value = user

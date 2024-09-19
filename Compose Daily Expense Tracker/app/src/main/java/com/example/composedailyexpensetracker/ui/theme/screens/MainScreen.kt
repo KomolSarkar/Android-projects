@@ -39,6 +39,11 @@ import java.util.Date
 
 @Composable
 fun MainScreen(navController: NavController, expenseViewModel: ExpenseViewModel) {
+    val totalCost by expenseViewModel.totalCost.observeAsState()
+    val expenseOfKomol by expenseViewModel.expenseOfKomol.observeAsState()
+    val expenseOfSukanta by expenseViewModel.expenseOfSukanta.observeAsState()
+    val balanceOfKomol by expenseViewModel.balanceOfKomol.observeAsState()
+    val balanceOfSukanta by expenseViewModel.balanceOfSukanta.observeAsState()
     val expenseList by expenseViewModel.expenseList.observeAsState()
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -49,7 +54,7 @@ fun MainScreen(navController: NavController, expenseViewModel: ExpenseViewModel)
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Total cost: BDT 4000.00",
+                    text = "Total cost: BDT " + totalCost,
                     color = Color.Red,
                     fontSize = 24.sp,
                     fontWeight = FontWeight(600),
@@ -59,9 +64,17 @@ fun MainScreen(navController: NavController, expenseViewModel: ExpenseViewModel)
 
                 Column {
                     PerPersonCalculationHeadline()
-                    PerPersonCalculation()
+                    expenseOfKomol?.let { balanceOfKomol?.let { it1 ->
+                        PerPersonCalculation("Komol", it,
+                            it1
+                        )
+                    } }
                     Spacer(modifier = Modifier.heightIn(4.dp))
-                    PerPersonCalculation()
+                    expenseOfSukanta?.let { balanceOfSukanta?.let { it1 ->
+                        PerPersonCalculation("Sukanta", it,
+                            it1
+                        )
+                    } }
                     Spacer(modifier = Modifier.heightIn(8.dp))
                 }
 
@@ -140,28 +153,28 @@ fun PerPersonCalculationHeadline() {
 }
 
 @Composable
-fun PerPersonCalculation() {
+fun PerPersonCalculation(name: String, expense: Int, balance: Int) {
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
             modifier = Modifier.weight(.4f)
                 .align(Alignment.CenterVertically),
-            text = "Komol",
+            text = name,
             textAlign = TextAlign.Left
         )
 
         Text(
             modifier = Modifier.weight(.3f)
                 .align(Alignment.CenterVertically),
-            text = "BDT 2000.00",
+            text = "BDT " + expense,
             textAlign = TextAlign.Left
         )
 
         Text(
             modifier = Modifier.weight(.3f)
                 .align(Alignment.CenterVertically),
-            text = "BDT 0.00",
+            text = "BDT " + balance,
             textAlign = TextAlign.Left
         )
     }
