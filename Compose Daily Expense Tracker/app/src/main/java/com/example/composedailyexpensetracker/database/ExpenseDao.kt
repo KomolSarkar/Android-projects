@@ -22,6 +22,6 @@ interface ExpenseDao {
     @Insert
     fun addExpense(expense: Expense)
 
-    @Delete
-    fun delete(expense: Expense)
+    @Query("Delete FROM expense where id = :id")
+    fun delete(id: Int)
 }

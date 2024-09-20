@@ -82,6 +82,12 @@ class ExpenseViewModel(): ViewModel() {
         }
     }
 
+    fun deleteExpense(id: Int) {
+        viewModelScope.launch(Dispatchers.IO){
+            expenseDao.delete(id)
+        }
+    }
+
     private fun resetExpenditureValues() {
         viewModelScope.launch(Dispatchers.Main.immediate) {
             addExpenseUser.value = "Komol"

@@ -1,5 +1,6 @@
 package com.example.composedailyexpensetracker.ui.theme.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,20 +14,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,6 +45,7 @@ import com.example.composedailyexpensetracker.viewmodel.ExpenseViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, expenseViewModel: ExpenseViewModel) {
     val totalCost by expenseViewModel.totalCost.observeAsState()
@@ -88,11 +97,34 @@ fun MainScreen(navController: NavController, expenseViewModel: ExpenseViewModel)
                 )
 
                 Spacer(modifier = Modifier.heightIn(4.dp))
-                ExpenseHeadline()
+                //ExpenseHeadline()
                 expenseList?.let {
                     LazyColumn(content = {
                         itemsIndexed(it) {index: Int, item: Expense ->
                             ExpenseItem(item)
+                            /*val dismissState = rememberSwipeToDismissBoxState(
+                                confirmValueChange = {
+                                    if (it == SwipeToDismissBoxValue.EndToStart) {
+                                        expenseViewModel.deleteExpense(item.id)
+                                    }
+                                    true
+                                }
+                            )
+
+                            SwipeToDismissBox(
+                                state = dismissState,
+                                backgroundContent = {
+                                    Box(
+                                        modifier = Modifier.padding(8.dp).background(Color.Red)
+                                    ) {
+                                        Icon(imageVector = Icons.Default.Delete,
+                                            contentDescription = "Delete",
+                                            modifier = Modifier.align(Alignment.CenterEnd))
+                                    }
+                                }
+                            ) {
+                                ExpenseItem(item)
+                            }*/
                         }
                     })
                 }?: Text(
@@ -216,36 +248,44 @@ fun ExpenseHeadline() {
 
 @Composable
 fun ExpenseItem(expense: Expense) {
-    Card(modifier = Modifier.fillMaxWidth().padding(4.dp),
+    Card(modifier = Modifier.padding(8.dp),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 4.dp
         )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             val date = Date(expense.date)
             val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
             val date_str = simpleDateFormat.format(date)
-            Text(
-                modifier = Modifier.weight(.3f)
-                    .align(Alignment.CenterVertically),
-                text = date_str,
-                textAlign = TextAlign.Left
-            )
+            Column (modifier = Modifier.weight(0.7f)){
+                Text(
+                    text = date_str,
+                    textAlign = TextAlign.Left,
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 12.sp,
+                    color = Color.LightGray
+                )
 
-            Text(
-                modifier = Modifier.weight(.4f)
-                    .align(Alignment.CenterVertically),
-                text = expense.name,
-                textAlign = TextAlign.Left
-            )
+                Text(
+                    text = expense.name,
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
 
             Text(
                 modifier = Modifier.weight(.3f)
                     .align(Alignment.CenterVertically),
                 text = "BDT " + expense.amount,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.End,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.LightGray
             )
         }
     }
