@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.composedailyexpensetracker.viewmodel.ExpenseViewModel
 import java.text.SimpleDateFormat
 
@@ -47,6 +48,7 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
     val addExpenseUser by expenseViewModel.addExpenseUser.observeAsState(users[0])
     val addExpenseAmount by expenseViewModel.addExpenseAmountInString.observeAsState("")
     var expenseAmount by remember { mutableStateOf("") }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -61,7 +63,6 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
                 expenseViewModel.onExpenseDateChange(it)
             })
             UserBox(users, addExpenseUser, onUserChange = {
-                Log.i("Komols user", it)
                 expenseViewModel.onExpenderChange(it)
             })
             OutlinedTextField(
@@ -81,9 +82,10 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
                 if (addExpenseDate != 0L || addExpenseAmount != "") {
                     expenseViewModel.addExpense()
                     navController.navigate("main_screen") {
-                        popUpTo("add_expense_screen") {
-                            inclusive = true
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
                         }
+                        launchSingleTop = true
                     }
                 }
             },
@@ -99,7 +101,6 @@ fun AddExpenseScreen(navController: NavController, expenseViewModel: ExpenseView
 fun UserBox(users: Array<String>, user: String, onUserChange: (String)->Unit) {
 
     var isExpanded by remember { mutableStateOf(false) }
-    //var selectedUser by remember { mutableStateOf(users[0]) }
 
     Box(
         modifier = Modifier.fillMaxWidth().padding(32.dp, 4.dp)
