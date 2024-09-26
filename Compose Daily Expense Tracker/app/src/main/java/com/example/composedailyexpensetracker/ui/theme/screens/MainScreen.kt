@@ -57,6 +57,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.composedailyexpensetracker.data.Expense
+import com.example.composedailyexpensetracker.ui.theme.screens.mainscreen.DeleteActionIcon
+import com.example.composedailyexpensetracker.ui.theme.screens.mainscreen.SwipeableCostItem
 import com.example.composedailyexpensetracker.viewmodel.ExpenseViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -132,12 +134,26 @@ fun MainScreen(navController: NavController, expenseViewModel: ExpenseViewModel)
                 expenseList?.let {
                     LazyColumn(content = {
                         itemsIndexed(it) { index: Int, item: Expense ->
-                            AnimationBox {
+                            /*AnimationBox {
                                 val openAlertDialog = remember { mutableStateOf(false) }
                                 ExpenseItem(item, onDelete = {
                                     itemIdToDelete.value = it
                                     openDialog.value = true
                                 })
+                            }*/
+                            //Adding swipeable view:
+                            SwipeableCostItem(
+                                onDeleteItem = {},
+                                item,
+                                action = {DeleteActionIcon(onClick = {})}
+                            ) {
+                                AnimationBox {
+                                    val openAlertDialog = remember { mutableStateOf(false) }
+                                    ExpenseItem(item, onDelete = {
+                                        itemIdToDelete.value = it
+                                        openDialog.value = true
+                                    })
+                                }
                             }
                         }
                     })
